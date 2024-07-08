@@ -1,11 +1,17 @@
 import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
 
+/**
+ * Users table (simple, using token)
+ */
 export const usersTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   token: text("token"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+/**
+ * Search history table
+ */
 export const searchHistoryTable = pgTable("search_history", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: text("user_id"),

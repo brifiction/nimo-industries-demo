@@ -3,7 +3,19 @@
 import "sst"
 declare module "sst" {
   export interface Resource {
-    DbUrl: {
+    ApiKey: {
+      type: "sst.sst.Secret"
+      value: string
+    }
+    Drizzle: {
+      type: "sst.sst.Secret"
+      value: string
+    }
+    MailPassword: {
+      type: "sst.sst.Secret"
+      value: string
+    }
+    MailUsername: {
       type: "sst.sst.Secret"
       value: string
     }

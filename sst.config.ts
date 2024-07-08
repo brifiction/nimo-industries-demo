@@ -9,22 +9,25 @@ export default $config({
     };
   },
   async run() {
-    const secret = new sst.Secret("DbUrl", "connection-string");
+    const apiKey = new sst.Secret("ApiKey", "apiKey");
+    const drizzle = new sst.Secret("Drizzle", "connection-string");
+    const mailUsername = new sst.Secret("MailUsername", "MailUsername");
+    const mailPassword = new sst.Secret("MailPassword", "MailPassword");
 
     const api = new sst.aws.ApiGatewayV2("NimoCryptocurrencyApi");
     api.route("GET /", {
       handler: "api/index.health",
     });
     api.route("GET /register", {
-      link: [secret],
+      link: [apiKey, drizzle, mailUsername, mailPassword],
       handler: "api/index.createUser",
     });
     api.route("GET /search", {
-      link: [secret],
+      link: [apiKey, drizzle, mailUsername, mailPassword],
       handler: "api/index.search",
     });
     api.route("GET /history", {
-      link: [secret],
+      link: [apiKey, drizzle, mailUsername, mailPassword],
       handler: "api/index.history",
     });
 

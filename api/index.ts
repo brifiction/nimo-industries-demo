@@ -1,11 +1,12 @@
 // import { Resource } from "sst";
 import fetch from "node-fetch";
-import { apiKey, baseCoinGeckoUrl } from "./common";
+import { baseCoinGeckoUrl, options } from "./common";
 import { db } from "../drizzle";
 import { searchHistoryTable, usersTable } from "../db/schema";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
 import { APIGatewayEvent } from "aws-lambda";
+import { sendMail } from "./mail";
 
 /**
  * Check API service health.
@@ -29,8 +30,14 @@ export async function createUser() {
       .insert(usersTable)
       .values({ token: uuidv4() })
       .returning({
-        id: usersTable.id,
+        token: usersTable.token,
       });
+
+    sendMail(
+      "crypto-user@test.com",
+      "Receipt - Your API token",
+      JSON.stringify(results, null, 2)
+    );
 
     return {
       statusCode: 200,
@@ -50,46 +57,81 @@ export async function createUser() {
  */
 export async function search(event: APIGatewayEvent) {
   try {
-    const { query } = event.queryStringParameters;
+    const queryParams = event.queryStringParameters;
     const headers = event.headers;
 
-    if ("x-api-token" in headers) {
-      const user = await db
-        .select()
-        .from(usersTable)
-        .where(eq(usersTable.token, headers["x-api-token"] || ""));
-
-      if (!user) {
-        throw new Error("Invalid token");
-      }
-    } else {
+    if (!headers || !("x-api-token" in headers)) {
       throw new Error("No API token provided");
     }
 
-    const url = `${baseCoinGeckoUrl}/search?query=${query}`;
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        "x-cg-demo-api-key": apiKey,
-      },
-    };
+    if (!queryParams || !queryParams.query) {
+      throw new Error("No query parameter provided");
+    }
+
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.token, headers["x-api-token"]));
+
+    if (!user.length) {
+      throw new Error("Invalid token");
+    }
+
+    const url = `${baseCoinGeckoUrl}/search?query=${queryParams.query}`;
 
     const res = await fetch(url, options);
+    if (!res.ok) {
+      throw new Error("Failed to fetch data from CoinGecko");
+    }
     const json = await res.json();
 
-    await db.insert(searchHistoryTable).values({
-      userId: headers["x-api-token"],
-      searchQuery: query,
-      searchResults: JSON.stringify(json),
-    });
+    const results = await db
+      .insert(searchHistoryTable)
+      .values({
+        userId: headers["x-api-token"],
+        searchQuery: queryParams.query,
+        searchResults: JSON.stringify(json, null, 2),
+      })
+      .returning({
+        id: searchHistoryTable.id,
+      });
+
+    sendMail(
+      "crypto-user@test.com",
+      "Receipt - Your crypto search results",
+      JSON.stringify({ results, json }, null, 2)
+    );
 
     return {
       statusCode: 200,
       body: JSON.stringify({ results: json }),
     };
   } catch (err) {
-    console.error("error:" + err);
+    console.error("Error:", err.message);
+    let statusCode = 500;
+    let message = "There is an error, please ensure you're authorized.";
+
+    if (err.message === "No API token provided") {
+      statusCode = 401;
+      message = err.message;
+    } else if (err.message === "Invalid token") {
+      statusCode = 401;
+      message = err.message;
+    } else if (err.message === "No query parameter provided") {
+      statusCode = 400;
+      message = err.message;
+    } else if (err.message === "Failed to fetch data from CoinGecko") {
+      statusCode = 502;
+      message = err.message;
+    }
+
+    return {
+      statusCode,
+      body: JSON.stringify({
+        error: statusCode,
+        message,
+      }),
+    };
   }
 }
 
@@ -98,31 +140,42 @@ export async function search(event: APIGatewayEvent) {
  *
  */
 export async function history(event: APIGatewayEvent) {
-  const headers = event.headers;
+  try {
+    const headers = event.headers;
 
-  if ("x-api-token" in headers) {
+    if (!headers || !("x-api-token" in headers)) {
+      throw new Error("No API token provided");
+    }
+
     const user = await db
       .select()
       .from(usersTable)
       .where(eq(usersTable.token, headers["x-api-token"] || ""));
 
-    if (!user) {
+    if (user.length === 0) {
       throw new Error("Invalid token");
     }
-  } else {
-    throw new Error("No API token provided");
+
+    const searchHistoryResults = await db
+      .select()
+      .from(searchHistoryTable)
+      .where(eq(searchHistoryTable.userId, headers["x-api-token"] || "")); // Assuming user[0].id is the userId you need
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        count: searchHistoryResults.length,
+        results: searchHistoryResults,
+      }),
+    };
+  } catch (err) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        error: 401,
+        message:
+          err.message || "There is an error, please ensure you're authorized.",
+      }),
+    };
   }
-
-  const searchHistoryResults = await db
-    .select()
-    .from(searchHistoryTable)
-    .where(eq(searchHistoryTable.userId, headers["x-api-token"] || ""));
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      count: searchHistoryResults.length,
-      results: searchHistoryResults,
-    }),
-  };
 }
