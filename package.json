@@ -1,0 +1,19 @@
+{
+  "name": "nimo-industries-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "sst": "ion"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.140"
+  }
+}
