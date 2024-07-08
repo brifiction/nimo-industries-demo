@@ -15,6 +15,10 @@ export default $config({
     api.route("GET /", {
       handler: "api/index.health",
     });
+    api.route("GET /register", {
+      link: [secret],
+      handler: "api/index.createUser",
+    });
     api.route("GET /search", {
       link: [secret],
       handler: "api/index.search",

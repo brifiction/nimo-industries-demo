@@ -6,6 +6,6 @@ export default defineConfig({
   out: "./supabase/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: Resource.DbUrl.value,
+    url: process.env.DATABASE_URL! ?? Resource.DbUrl.value,
   },
 });
