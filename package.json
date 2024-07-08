@@ -10,11 +10,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.609.0",
+    "@supabase/supabase-js": "^2.44.3",
+    "drizzle-orm": "^0.31.2",
     "node-fetch": "^3.3.2",
+    "postgres": "^3.4.4",
     "sst": "ion"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.140"
+    "@tsconfig/node20": "^20.1.4",
+    "@types/aws-lambda": "8.10.140",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.22.8"
   }
 }
