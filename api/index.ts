@@ -1,6 +1,14 @@
+// import { Resource } from "sst";
 import fetch from "node-fetch";
 import { apiKey, baseCoinGeckoUrl } from "./common";
+import { db } from "../drizzle";
+import { searchHistoryTable } from "../db/schema";
 
+/**
+ * Check API service health.
+ *
+ * @returns
+ */
 export async function health() {
   return {
     statusCode: 200,
@@ -8,6 +16,11 @@ export async function health() {
   };
 }
 
+/**
+ * Search for cryptocurrency, by cryptocurrency name.
+ *
+ * @returns
+ */
 export async function search(event) {
   try {
     const { query } = event.queryStringParameters;
@@ -24,24 +37,27 @@ export async function search(event) {
     const res = await fetch(url, options);
     const json = await res.json();
 
+    await db.insert(searchHistoryTable).values({
+      searchQuery: query,
+      searchResults: JSON.stringify(json),
+    });
+
     return {
       statusCode: 200,
       body: JSON.stringify({ results: json }),
     };
   } catch (err) {
     console.error("error:" + err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err }),
-    };
   }
 }
 
 export async function history(event) {
-  const { name } = event.queryStringParameters;
+  const { query } = event.queryStringParameters;
+
+  const searchHistoryResults = await db.select().from(searchHistoryTable);
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ searchHistoryResults }),
   };
 }
