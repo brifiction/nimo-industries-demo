@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { baseCoinGeckoUrl } from "./common";
+import { apiKey, baseCoinGeckoUrl } from "./common";
 
 export async function health() {
   return {
@@ -9,12 +9,32 @@ export async function health() {
 }
 
 export async function search(event) {
-  const { name } = event.queryStringParameters;
+  try {
+    const { query } = event.queryStringParameters;
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ name }),
-  };
+    const url = `${baseCoinGeckoUrl}/search?query=${query}`;
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        "x-cg-demo-api-key": apiKey,
+      },
+    };
+
+    const res = await fetch(url, options);
+    const json = await res.json();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ results: json }),
+    };
+  } catch (err) {
+    console.error("error:" + err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err }),
+    };
+  }
 }
 
 export async function history(event) {
