@@ -9,6 +9,25 @@ export default $config({
     };
   },
   async run() {
+    const table = new sst.aws.Dynamo("NimoCryptocurrencySearchHistory", {
+      fields: {
+        id: "string",
+        crypto: "string",
+        createdAt: "string",
+      },
+      primaryIndex: {
+        hashKey: "id",
+        rangeKey: "createdAt",
+      },
+      globalIndexes: {
+        cryptoIndex: {
+          hashKey: "crypto",
+          rangeKey: "createdAt",
+        },
+      },
+      stream: "new-and-old-images",
+    });
+
     const api = new sst.aws.ApiGatewayV2("NimoCryptocurrencyApi");
     api.route("GET /", {
       handler: "api/index.health",
@@ -19,5 +38,10 @@ export default $config({
     api.route("GET /history", {
       handler: "api/index.history",
     });
+
+    return {
+      api: api.url,
+      table: table.name,
+    };
   },
 });

@@ -7,6 +7,10 @@ declare module "sst" {
       type: "sst.aws.ApiGatewayV2"
       url: string
     }
+    NimoCryptocurrencySearchHistory: {
+      name: string
+      type: "sst.aws.Dynamo"
+    }
   }
 }
 export {}
