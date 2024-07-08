@@ -1,55 +1,10 @@
-// import { Resource } from "sst";
 import fetch from "node-fetch";
 import { baseCoinGeckoUrl, options } from "./common";
 import { db } from "../drizzle";
 import { searchHistoryTable, usersTable } from "../db/schema";
-import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
 import { APIGatewayEvent } from "aws-lambda";
 import { sendMail } from "./mail";
-
-/**
- * Check API service health.
- *
- * @returns
- */
-export async function health() {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ message: "OK" }),
-  };
-}
-
-/**
- * Generate a unique token for API user.
- *
- */
-export async function createUser() {
-  try {
-    const results = await db
-      .insert(usersTable)
-      .values({ token: uuidv4() })
-      .returning({
-        token: usersTable.token,
-      });
-
-    sendMail(
-      "crypto-user@test.com",
-      "Receipt - Your API token",
-      JSON.stringify(results, null, 2)
-    );
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Save the token! It will not be shown again.",
-        results,
-      }),
-    };
-  } catch (err) {
-    console.error("error:" + err);
-  }
-}
 
 /**
  * Search for cryptocurrency, by cryptocurrency name.
@@ -77,7 +32,9 @@ export async function search(event: APIGatewayEvent) {
       throw new Error("Invalid token");
     }
 
-    const url = `${baseCoinGeckoUrl}/search?query=${queryParams.query}`;
+    const url = `${baseCoinGeckoUrl}/simple/price?ids=${
+      queryParams.query
+    }&vs_currencies=${queryParams.currency ?? "usd,aud"}`;
 
     const res = await fetch(url, options);
     if (!res.ok) {
@@ -96,7 +53,7 @@ export async function search(event: APIGatewayEvent) {
         id: searchHistoryTable.id,
       });
 
-    sendMail(
+    await sendMail(
       "crypto-user@test.com",
       "Receipt - Your crypto search results",
       JSON.stringify({ results, json }, null, 2)

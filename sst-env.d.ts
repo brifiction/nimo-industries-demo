@@ -11,7 +11,15 @@ declare module "sst" {
       type: "sst.sst.Secret"
       value: string
     }
+    MailHost: {
+      type: "sst.sst.Secret"
+      value: string
+    }
     MailPassword: {
+      type: "sst.sst.Secret"
+      value: string
+    }
+    MailPort: {
       type: "sst.sst.Secret"
       value: string
     }

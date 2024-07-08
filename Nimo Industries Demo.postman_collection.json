@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "bbcacbef-26cf-41ff-b173-bb42cff560f3",
+		"name": "Nimo Industries Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4310097"
+	},
+	"item": [
+		{
+			"name": "/search?query=ethereum",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-token",
+						"value": "39206274-f8e9-455c-9d2b-d565f7f21bcc"
+					}
+				],
+				"url": {
+					"raw": "[PROVIDED_URL]/search?query=ethereum&currency=aud,cad,usd",
+					"host": [
+						"[PROVIDED_URL]"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "ethereum"
+						},
+						{
+							"key": "currency",
+							"value": "aud,cad,usd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/history",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-token",
+						"value": "39206274-f8e9-455c-9d2b-d565f7f21bcc"
+					}
+				],
+				"url": {
+					"raw": "[PROVIDED_URL]/history",
+					"host": [
+						"[PROVIDED_URL]"
+					],
+					"path": [
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/register",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "[PROVIDED_URL]/register",
+					"host": [
+						"[PROVIDED_URL]"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,6 +1,6 @@
 # nimo-industries-demo
 
-What is this? This is a simple project for Nimo Industries, to showcase SST Ion and developing a simple API service.
+What is this? This is a simple project for Nimo Industries, to showcase SST Ion (https://ion.sst.dev/docs) and developing a simple API service.
 
 The third-party API service is CoinGecko API, to search for cryptocurrency details.
 
@@ -56,6 +56,21 @@ pnpm i
 pnpm sst version
 ```
 
+### Setting up Drizzle migrations
+
+For database migration, run the following commands below:
+
+```bash
+npx drizzle-kit generate
+```
+
+Then:
+
+```bash
+npx drizzle-kit migrate
+npx drizzle-kit push
+```
+
 ### Setting up secrets
 
 Using SST's secret command feature, set up your environment variables below:
@@ -63,6 +78,8 @@ Using SST's secret command feature, set up your environment variables below:
 ```bash
 sst secret set ApiKey COINGECKO_API_KEY
 sst secret set Drizzle POSTGRES_DB_CONNECTION_STRING
+sst secret set MailSmtpHost SMTP_MAIL_HOST
+sst secret set MailSmtpPort SMTP_MAIL_PORT
 sst secret set MailUsername SMTP_MAIL_USERNAME
 sst secret set MailPassword SMTP_MAIL_PASSWORD
 ```

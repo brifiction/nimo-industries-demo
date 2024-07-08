@@ -1,6 +1,9 @@
 import nodemailer from "nodemailer";
 import { Resource } from "sst";
 
+/**
+ * TODO Minor unknown issue with using Resource.MailHost.value and Resource.MailPort.value
+ */
 export const transporter = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
@@ -19,5 +22,12 @@ export const sendMail = async (to: string, subject: string, text: string) => {
     html: `<code>${text}</code>`,
   };
 
-  transporter.sendMail(message);
+  await new Promise((rsv, rjt) => {
+    transporter.sendMail(message, function (error, info) {
+      if (error) {
+        return rjt(error);
+      }
+      rsv("Email sent");
+    });
+  });
 };
