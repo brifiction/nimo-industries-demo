@@ -23,6 +23,9 @@ importers:
       sst:
         specifier: ion
         version: 3.0.37
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
     devDependencies:
       '@tsconfig/node20':
         specifier: ^20.1.4
@@ -30,6 +33,9 @@ importers:
       '@types/aws-lambda':
         specifier: 8.10.140
         version: 8.10.140
+      '@types/uuid':
+        specifier: ^10.0.0
+        version: 10.0.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -637,6 +643,9 @@ packages:
   '@types/phoenix@1.6.5':
     resolution: {integrity: sha512-xegpDuR+z0UqG9fwHqNoy3rI7JDlvaPh2TY47Fl80oq6g+hXT+c/LEuE43X48clZ6lOfANl5WrPur9fYO1RJ/w==}
 
+  '@types/uuid@10.0.0':
+    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
+
   '@types/ws@8.5.10':
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
 
@@ -908,6 +917,10 @@ packages:
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
@@ -1796,6 +1809,8 @@ snapshots:
 
   '@types/phoenix@1.6.5': {}
 
+  '@types/uuid@10.0.0': {}
+
   '@types/ws@8.5.10':
     dependencies:
       '@types/node': 20.14.10
@@ -2020,6 +2035,8 @@ snapshots:
   tslib@2.6.3: {}
 
   undici-types@5.26.5: {}
+
+  uuid@10.0.0: {}
 
   uuid@9.0.1: {}
 
