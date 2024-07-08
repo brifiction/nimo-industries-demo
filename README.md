@@ -49,7 +49,7 @@ First, you would need to configure your AWS CLI profile (assumed you have alread
 aws configure
 ```
 
-Next, let's setup the project
+Next, let's setup the project - pre-requisite to run `curl -fsSL https://ion.sst.dev/install | bash` first (see https://ion.sst.dev/).
 
 ```
 pnpm i
